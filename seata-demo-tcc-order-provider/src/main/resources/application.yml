@@ -1,0 +1,165 @@
+server:
+  port: 8083
+#====================================stream =============================================
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/order_tcc?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: 123456
+    druid:
+      # 配置初始化连接池大小
+      initial-size: 5
+      # 配置初始化连接池最小连接数
+      min-idle: 5
+      # 配置初始化连接池最大连接数
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久进行一次检测，检测需要关闭的空闲连接，单位毫秒。
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在连接池中的最小生存时间，单位毫秒
+      min-evictable-idle-time-millis: 60000
+      # 配置一个连接在连接池中的最大生存时间，单位毫秒
+      max-evictable-idle-time-millis: 90000
+      # 用来测试连接是否可用的SQL语句
+      validation-query: SELECT 1
+      # 配置从连接池空闲时，是否检查连接有效性，true每次都检查；false不检查
+      test-while-idle: true
+      # 配置从连接池获取连接时，是否检查连接有效性，true每次都检查；false不检查
+      test-on-borrow: false
+      # 配置向连接池归还连接时，是否检查连接有效性，true每次都检查；false
+      test-on-return: false
+      # 配置监控统计拦截的filters
+      # filters: stat,wall,log4j
+      # 复用连接和避免短连接
+      keep-alive: true
+      # 设置获取连接出错时的自动重连次数, 默认1
+      connection-error-retry-attempts: 1
+      # true表示向数据库请求连接失败后,就算后端数据库恢复正常也不进行重连,客户端对pool的请求都拒绝掉.false表示新的请求都会尝试去数据库请求connection.默认为false
+      break-after-acquire-failure: false
+  application:
+    name: seata-dubbo-order
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  flyway:
+    enabled: true
+    clean-disabled: true
+    baseline-on-migrate: true
+
+
+#====================================Dubbo config===============================================
+dubbo:
+  application:
+    name: ${spring.application.name}
+    qosEnable: false
+  protocol:
+    name: dubbo
+    port: 20880
+  registry:
+    address: nacos://localhost:8848
+  scan:
+    base-packages: "com.phper666.seata.demo.tcc.order.provider"
+  cloud:
+    subscribed-services: ${spring.application.name}
+
+#====================================mybatis-plus config===============================================
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/*.xml
+#  typeAliasesPackage: io.seata.samples.integration.*.entity
+#  configuration:
+#    map-underscore-to-camel-case: true
+#  global-config:
+#    db-config:
+#      id-type: auto
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#====================================Seata Config===============================================
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: tx_service_group_test # 事务群组（可以每个应用独立取名，也可以使用相同的名字）
+  # 设置为false，使用TCC，true为使用AT
+  enable-auto-data-source-proxy: false
+  #  client:
+  #    rm-report-success-enable: true
+  #    rm-table-meta-check-enable: false # 自动刷新缓存中的表结构（默认false）
+  #    rm-report-retry-count: 5 # 一阶段结果上报TC重试次数（默认5）
+  #    rm-async-commit-buffer-limit: 10000 # 异步提交缓存队列长度（默认10000）
+  #    rm:
+  #      lock:
+  #        lock-retry-internal: 10 # 校验或占用全局锁重试间隔（默认10ms）
+  #        lock-retry-times:    30 # 校验或占用全局锁重试次数（默认30）
+  #        lock-retry-policy-branch-rollback-on-conflict: true # 分支事务与其它全局回滚事务冲突时锁策略（优先释放本地锁让回滚成功）
+  #    tm-commit-retry-count:   3 # 一阶段全局提交结果上报TC重试次数（默认1次，建议大于1）
+  #    tm-rollback-retry-count: 3 # 一阶段全局回滚结果上报TC重试次数（默认1次，建议大于1）
+  #    undo:
+  #      undo-data-validation: true # 二阶段回滚镜像校验（默认true开启）
+  #      undo-log-serialization: jackson # undo序列化方式（默认jackson）
+  #      undo-log-table: undo_log  # 自定义undo表名（默认undo_log）
+  #    support:
+  #      spring:
+  #        datasource-autoproxy: true
+  #  service:
+  #    vgroup-mapping:
+  #      my_test_tx_group: default # TC 集群（必须与seata-server保持一致）
+  #    enable-degrade: false # 降级开关
+  #    disable-global-transaction: false # 禁用全局事务（默认false）
+  #    grouplist:
+  #      default: localhost:8091
+  #  transport:
+  #    shutdown:
+  #      wait: 3
+  #    thread-factory:
+  #      boss-thread-prefix: NettyBoss
+  #      worker-thread-prefix: NettyServerNIOWorker
+  #      server-executor-thread-prefix: NettyServerBizHandler
+  #      share-boss-worker: false
+  #      client-selector-thread-prefix: NettyClientSelector
+  #      client-selector-thread-size: 1
+  #      client-worker-thread-prefix: NettyClientWorkerThread
+  #    type: TCP
+  #    server: NIO
+  #    heartbeat: true
+  #    serialization: seata
+  #    compressor: none
+  #    enable-client-batch-send-request: true # 客户端事务消息请求是否批量合并发送（默认true）
+  #  registry:
+  #    type: nacos
+  #    nacos:
+  #      server-addr: localhost:8848
+  #      namespace: seataid
+  #      cluster: default
+  #      username: nacos
+  #      password: nacos
+  #      group:
+  #  config:
+  #    type: nacos
+  #    nacos:
+  #      namespace: seataid
+  #      server-addr: localhost:8848
+  #      username: nacos
+  #      password: nacos
+  #      data-id: seata-service.properties
+  #      group: SEATA_GROUP
+  registry:
+    type: nacos
+    nacos:
+      server-addr: localhost:8848
+      namespace: 9fdcbe8r-4511-4a30-b5f0-7a4fab022ac7
+      group: seata-server
+      cluster: default
+  config:
+    type: nacos
+    nacos:
+      namespace: 9fdcbe8r-4511-4a30-b5f0-7a4fab022ac7
+      server-addr: localhost:8848
+      data-id: seata.properties
+      group: seata-server
+  log:
+    exception-rate: 100
