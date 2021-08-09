@@ -9,7 +9,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @MapperScan("com.phper666.seata.demo.tcc.account.provider.mapper")
 public class AccountProviderApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(AccountProviderApplication.class, args);
     }

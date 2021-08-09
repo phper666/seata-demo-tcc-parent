@@ -1,5 +1,6 @@
 package com.phper666.seata.demo.tcc.order.provider.core.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.phper666.seata.demo.tcc.order.provider.core.OrderCore;
 import com.phper666.seata.demo.tcc.order.provider.entity.OrderDO;
@@ -23,5 +24,12 @@ public class OrderCoreImpl extends ServiceImpl<OrderMapper, OrderDO> implements 
     @Override
     public boolean deleteOrder(Long id) {
         return removeById(id);
+    }
+
+    @Override
+    public boolean deleteOrder(String orderNo) {
+        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(OrderDO::getOrderNo, orderNo);
+        return remove(queryWrapper);
     }
 }

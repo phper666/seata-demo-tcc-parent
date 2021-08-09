@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DubboService
 @Slf4j
 public class AccountDubboServiceImpl implements AccountDubboService {
-
     @Autowired
     private AccountService accountService;
 

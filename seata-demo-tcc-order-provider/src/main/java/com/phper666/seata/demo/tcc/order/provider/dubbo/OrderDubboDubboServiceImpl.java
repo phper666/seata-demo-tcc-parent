@@ -4,7 +4,6 @@ import com.phper666.seata.demo.tcc.account.provider.dto.OrderDTO;
 import com.phper666.seata.demo.tcc.account.provider.rpc.OrderDubboService;
 import com.phper666.seata.demo.tcc.order.provider.service.OrderService;
 import io.seata.core.context.RootContext;
-import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -20,6 +19,6 @@ public class OrderDubboDubboServiceImpl implements OrderDubboService {
     @GlobalTransactional
     public boolean tccCreateOrder(OrderDTO orderDTO) {
         log.info("全局事务id ：" + RootContext.getXID());
-        return orderService.tccCreateOrder(new BusinessActionContext(), orderDTO);
+        return orderService.tccCreateOrder(orderDTO);
     }
 }

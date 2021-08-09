@@ -1,8 +1,7 @@
 package com.phper666.seata.demo.tcc.storage.provider.controller;
 
-import com.phper666.seata.demo.tcc.account.provider.dto.CommodityDTO;
+import com.phper666.seata.demo.tcc.account.provider.dto.StorageDTO;
 import com.phper666.seata.demo.tcc.storage.provider.service.StorageService;
-import io.seata.rm.tcc.api.BusinessActionContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,9 @@ public class StorageController {
      * 扣减库存
      */
     @PostMapping("dec_storage")
-    public boolean decreaseStorage(@RequestBody CommodityDTO commodityDTO) {
-        log.info("请求库存微服务：{}", commodityDTO.toString());
-        return storageService.tccDecreaseStorage(new BusinessActionContext(), commodityDTO);
+    public boolean tccDecreaseStorage(@RequestBody StorageDTO storageDTO) {
+        log.info("请求库存微服务：{}", storageDTO.toString());
+        return storageService.tccDecreaseStorage(storageDTO);
     }
 }
 

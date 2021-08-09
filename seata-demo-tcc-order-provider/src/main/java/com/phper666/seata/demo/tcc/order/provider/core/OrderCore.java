@@ -13,4 +13,6 @@ public interface OrderCore extends IService<OrderDO> {
     boolean createOrder(OrderDO orderDO);
 
     boolean deleteOrder(Long id);
+
+    boolean deleteOrder(String orderNo);
 }

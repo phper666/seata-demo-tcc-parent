@@ -15,6 +15,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountCoreImpl extends ServiceImpl<AccountMapper, AccountDO> implements AccountCore {
     @Override
+    public boolean freezeAmount(String userId, Double freezeAmount) {
+        String sql = "amount = amount - " + freezeAmount;
+        String sql1 = "freeze_amount = freeze_amount + " + freezeAmount;
+        UpdateWrapper<AccountDO> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.lambda()
+                .setSql(sql)
+                .setSql(sql1)
+                .eq(AccountDO::getUserId, userId);
+        return update(updateWrapper);
+    }
+
+    @Override
     public boolean freezeAccountCommit(String userId, Double freezeAmount) {
         String sql = "freeze_amount = freeze_amount - " + freezeAmount;
         UpdateWrapper<AccountDO> updateWrapper = new UpdateWrapper<>();
@@ -28,18 +40,6 @@ public class AccountCoreImpl extends ServiceImpl<AccountMapper, AccountDO> imple
     public boolean freezeAccountRollback(String userId, Double freezeAmount) {
         String sql = "freeze_amount = freeze_amount - " + freezeAmount;
         String sql1 = "amount = amount + " + freezeAmount;
-        UpdateWrapper<AccountDO> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lambda()
-                .setSql(sql)
-                .setSql(sql1)
-                .eq(AccountDO::getUserId, userId);
-        return update(updateWrapper);
-    }
-
-    @Override
-    public boolean freezeAmount(String userId, Double freezeAmount) {
-        String sql = "amount = amount - " + freezeAmount;
-        String sql1 = "freeze_amount = freeze_amount + " + freezeAmount;
         UpdateWrapper<AccountDO> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda()
                 .setSql(sql)

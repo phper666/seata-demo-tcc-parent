@@ -5,10 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class CommodityDTO implements Serializable {
-
-    private Integer id;
-
+public class StorageDTO implements Serializable {
     private String commodityCode;
 
     private String name;

@@ -39,9 +39,11 @@ public class StorageCoreImpl extends ServiceImpl<StorageMapper, StorageDO> imple
     @Override
     public boolean freezeStorageRollback(String commodityCode, Integer count) {
         String sql = "count = count + " + count;
+        String sql1 = "freeze_count = freeze_count - " + count;
         UpdateWrapper<StorageDO> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda()
                 .setSql(sql)
+                .setSql(sql1)
                 .eq(StorageDO::getCommodityCode, commodityCode);
         return update(updateWrapper);
     }
